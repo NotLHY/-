@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "candidate_id": "p8_ens3_20261109",
+  "created_at": "2026-11-09T23:40:00+08:00",
+  "class_ids": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "preprocessing": {
+    "color": "RGB",
+    "geometry": "aspect-preserving bilinear resize + black pad to square",
+    "normalize_mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "normalize_std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "jpeg_draft": true,
+    "tta": false
+  },
+  "fusion": {
+    "method": "prob",
+    "weights": [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333334
+    ]
+  },
+  "thresholds": {
+    "1": 0.5,
+    "2": 0.5,
+    "3": 0.5,
+    "4": 0.5,
+    "5": 0.5,
+    "6": 0.5,
+    "7": 0.5,
+    "8": 0.5,
+    "9": 0.5,
+    "10": 0.5
+  },
+  "precision": "fp32",
+  "view_policy": "all views per study, CSV order",
+  "patient_aggregation": "none",
+  "models": [
+    {
+      "model_id": "b0_224",
+      "backbone": "efficientnet_b0",
+      "pooling": "image_mean",
+      "image_size": 224,
+      "checkpoint": "model/b0_224_best.pt",
+      "sha256": "f14f3bf881b76b867443633385bc1c3c30a46c02a790765e2d0c8a351d9dec90",
+      "bytes": 16383227
+    },
+    {
+      "model_id": "b0_320",
+      "backbone": "efficientnet_b0",
+      "pooling": "image_mean",
+      "image_size": 320,
+      "checkpoint": "model/b0_320_best.pt",
+      "sha256": "1e979a1cb2c8b71ce2bdc3154c698e0f2028e605f4dbc62f624000e1a6ece919",
+      "bytes": 16383227
+    },
+    {
+      "model_id": "b0_448",
+      "backbone": "efficientnet_b0",
+      "pooling": "image_mean",
+      "image_size": 448,
+      "checkpoint": "model/b0_448_best.pt",
+      "sha256": "464e2a77629d1de5497ba0976c2ff96c47e94b57df889386bf5b83e40ff1e30d",
+      "bytes": 16383227
+    }
+  ]
+}

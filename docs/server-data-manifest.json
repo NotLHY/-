@@ -1,0 +1,27 @@
+{
+  "archive_file": "cxr_first.zip",
+  "archive_bytes": 55232226819,
+  "sha256": "ff458640e9974d63aa3329ee7ae1248260b619223980218e3741aee4c6d6836f",
+  "uncompressed_bytes": 55453849386,
+  "files": 33987,
+  "archive_root": "cxr_first",
+  "csv_sha256": {
+    "train": "3a07b4bb5c81758718d4ccb69885c9160103aeb55ab8206c71fef152de334f17",
+    "valid": "7e1930138718eee4595f48820c26b69d95fb021bc9d48b46006c0aacd2415df6",
+    "test": "63e107d840cbf27aee7c1c0ced1157aef454baa1141fdc3851e6c3011471529e"
+  },
+  "counts": {
+    "train": {
+      "studies": 18513,
+      "images": 30344
+    },
+    "valid": {
+      "studies": 859,
+      "images": 1422
+    },
+    "test": {
+      "studies": 1414,
+      "images": 2218
+    }
+  }
+}

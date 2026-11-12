@@ -1,0 +1,7 @@
+{
+  "weight_enum": "EfficientNet_B0_Weights.IMAGENET1K_V1",
+  "url": "https://download.pytorch.org/models/efficientnet_b0_rwightman-7f5810bc.pth",
+  "sha256": "7f5810bc96def8f7552d5b7e68d53c4786f81167d28291b21c0d90e1fca14934",
+  "source_dataset": "ImageNet-1K",
+  "bytes": 21444401
+}
