@@ -1,0 +1,51 @@
+{
+  "decision": "Retain established unweighted native three-resolution recipe; no more hyperparameter search",
+  "seed": 42,
+  "data_scope": "official train+valid; no holdout, no validation scoring or checkpoint selection",
+  "csv_sha256": {
+    "train": "3a07b4bb5c81758718d4ccb69885c9160103aeb55ab8206c71fef152de334f17",
+    "valid": "7e1930138718eee4595f48820c26b69d95fb021bc9d48b46006c0aacd2415df6"
+  },
+  "fusion": {
+    "method": "probability mean",
+    "weights": [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ]
+  },
+  "members": [
+    {
+      "image_size": 224,
+      "fixed_epochs": 6,
+      "schedule_epochs": 12,
+      "config": "configs/frozen_native/final_native_b0_224_s42_e6.json",
+      "original_best_checkpoint_sha256": "f14f3bf881b76b867443633385bc1c3c30a46c02a790765e2d0c8a351d9dec90",
+      "original_best_valid_auc": 0.7972023086260311,
+      "epoch_selection_provenance": "Historical p8 official-valid best; chosen before this final training"
+    },
+    {
+      "image_size": 320,
+      "fixed_epochs": 7,
+      "schedule_epochs": 12,
+      "config": "configs/frozen_native/final_native_b0_320_s42_e7.json",
+      "original_best_checkpoint_sha256": "1e979a1cb2c8b71ce2bdc3154c698e0f2028e605f4dbc62f624000e1a6ece919",
+      "original_best_valid_auc": 0.7889769321747713,
+      "epoch_selection_provenance": "Historical p8 official-valid best; chosen before this final training"
+    },
+    {
+      "image_size": 448,
+      "fixed_epochs": 8,
+      "schedule_epochs": 12,
+      "config": "configs/frozen_native/final_native_b0_448_s42_e8.json",
+      "original_best_checkpoint_sha256": "464e2a77629d1de5497ba0976c2ff96c47e94b57df889386bf5b83e40ff1e30d",
+      "original_best_valid_auc": 0.7979377977042754,
+      "epoch_selection_provenance": "Historical p8 official-valid best; chosen before this final training"
+    }
+  ],
+  "limitations": [
+    "Full-data retraining benefit unmeasured",
+    "Official valid cannot be used for selection after merging",
+    "T4 latency and final declarations still required"
+  ]
+}
