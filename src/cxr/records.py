@@ -99,16 +99,20 @@ def _labels(value: str, line: int) -> tuple[int, ...]:
     return labels
 
 
-def read_split(root: Path, split: str) -> SplitRecords:
+def read_split(root: Path, split: str, *, allow_missing: bool = False) -> SplitRecords:
     """Read one split.
 
-    ``CXR_ALLOW_MISSING_IMAGES=1`` relaxes the per-image existence check for
-    cache-only server runs: records still carry their original relative paths
-    (used to locate cache files), but raw JPEGs need not be present.
+    ``allow_missing=True`` relaxes the per-image existence check for cache-only
+    server runs: records still carry their original relative paths (used to
+    locate cache files), but raw JPEGs need not be present.
+
+    When ``allow_missing`` is False the check can still be relaxed via the
+    ``CXR_ALLOW_MISSING_IMAGES=1`` environment variable.
     """
     csv_path = root / f"{split}.csv"
     digest = hashlib.sha256(csv_path.read_bytes()).hexdigest()
-    allow_missing = os.environ.get("CXR_ALLOW_MISSING_IMAGES", "").strip() == "1"
+    if not allow_missing:
+        allow_missing = os.environ.get("CXR_ALLOW_MISSING_IMAGES", "").strip() == "1"
     grouped: dict[str, list[ImageRecord]] = {}
     subjects: dict[str, str] = {}
     labels: dict[str, tuple[int, ...] | None] = {}
