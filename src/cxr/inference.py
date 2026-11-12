@@ -85,9 +85,12 @@ def _studies_for(
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     if manifest["csv_sha256"] != {name: item.sha256 for name, item in data.items()}:
         raise ValueError("CSV hashes differ from saved split manifest")
-    return "internal" if manifest["validation"] == "internal" else "valid", manifest_studies(
-        data, manifest
-    )
+    if manifest["validation"] == "none":
+        raise ValueError("Fixed full-data training has no independent validation scope")
+    name = {"internal": "internal", "holdout": "dev", "official": "valid"}[
+        manifest["validation"]
+    ]
+    return name, manifest_studies(data, manifest)
 
 
 def _checkpoint_partial(state: dict[str, Any]) -> bool:

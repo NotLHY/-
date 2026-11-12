@@ -1,0 +1,873 @@
+{
+  "scope": "train/valid CSV only; no test reads; no chronology inferred from opaque IDs",
+  "csv_sha256": {
+    "train": "3a07b4bb5c81758718d4ccb69885c9160103aeb55ab8206c71fef152de334f17",
+    "valid": "7e1930138718eee4595f48820c26b69d95fb021bc9d48b46006c0aacd2415df6"
+  },
+  "train": {
+    "studies": 18513,
+    "patients": 11055,
+    "images": 30344,
+    "max_studies_per_patient": 21,
+    "view_counts": {
+      "1": 8507,
+      "2": 8369,
+      "3": 1465,
+      "4": 160,
+      "5": 9,
+      "6": 2,
+      "7": 1
+    },
+    "view_groups": {
+      "AP only": 9331,
+      "AP+PA": 23,
+      "AP+lateral": 1579,
+      "PA only": 40,
+      "PA+lateral": 6789,
+      "lateral only": 204,
+      "unknown": 547
+    },
+    "classes": [
+      {
+        "id": 1,
+        "positive_studies": 622,
+        "positive_patients": 572,
+        "positive_single_view": 395,
+        "largest_patient_positive_count": 3
+      },
+      {
+        "id": 2,
+        "positive_studies": 900,
+        "positive_patients": 592,
+        "positive_single_view": 603,
+        "largest_patient_positive_count": 16
+      },
+      {
+        "id": 3,
+        "positive_studies": 942,
+        "positive_patients": 814,
+        "positive_single_view": 662,
+        "largest_patient_positive_count": 5
+      },
+      {
+        "id": 4,
+        "positive_studies": 1436,
+        "positive_patients": 1284,
+        "positive_single_view": 703,
+        "largest_patient_positive_count": 4
+      },
+      {
+        "id": 5,
+        "positive_studies": 2404,
+        "positive_patients": 1742,
+        "positive_single_view": 1718,
+        "largest_patient_positive_count": 10
+      },
+      {
+        "id": 6,
+        "positive_studies": 3885,
+        "positive_patients": 2792,
+        "positive_single_view": 2451,
+        "largest_patient_positive_count": 14
+      },
+      {
+        "id": 7,
+        "positive_studies": 3968,
+        "positive_patients": 2906,
+        "positive_single_view": 2544,
+        "largest_patient_positive_count": 10
+      },
+      {
+        "id": 8,
+        "positive_studies": 4508,
+        "positive_patients": 3295,
+        "positive_single_view": 2644,
+        "largest_patient_positive_count": 9
+      },
+      {
+        "id": 9,
+        "positive_studies": 4654,
+        "positive_patients": 2859,
+        "positive_single_view": 2963,
+        "largest_patient_positive_count": 13
+      },
+      {
+        "id": 10,
+        "positive_studies": 6683,
+        "positive_patients": 5724,
+        "positive_single_view": 1648,
+        "largest_patient_positive_count": 8
+      }
+    ],
+    "cooccurrence": [
+      [
+        622,
+        47,
+        38,
+        54,
+        121,
+        144,
+        191,
+        232,
+        223,
+        0
+      ],
+      [
+        47,
+        900,
+        44,
+        20,
+        77,
+        156,
+        245,
+        193,
+        293,
+        0
+      ],
+      [
+        38,
+        44,
+        942,
+        202,
+        236,
+        234,
+        205,
+        242,
+        508,
+        0
+      ],
+      [
+        54,
+        20,
+        202,
+        1436,
+        281,
+        278,
+        305,
+        716,
+        443,
+        0
+      ],
+      [
+        121,
+        77,
+        236,
+        281,
+        2404,
+        969,
+        606,
+        704,
+        1257,
+        0
+      ],
+      [
+        144,
+        156,
+        234,
+        278,
+        969,
+        3885,
+        1238,
+        1005,
+        1501,
+        0
+      ],
+      [
+        191,
+        245,
+        205,
+        305,
+        606,
+        1238,
+        3968,
+        1224,
+        1926,
+        0
+      ],
+      [
+        232,
+        193,
+        242,
+        716,
+        704,
+        1005,
+        1224,
+        4508,
+        1513,
+        0
+      ],
+      [
+        223,
+        293,
+        508,
+        443,
+        1257,
+        1501,
+        1926,
+        1513,
+        4654,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        6683
+      ]
+    ]
+  },
+  "train_without_dev": {
+    "studies": 17166,
+    "patients": 10855,
+    "images": 28441,
+    "max_studies_per_patient": 21,
+    "view_counts": {
+      "1": 7639,
+      "2": 7958,
+      "3": 1405,
+      "4": 153,
+      "5": 8,
+      "6": 2,
+      "7": 1
+    },
+    "view_groups": {
+      "AP only": 8363,
+      "AP+PA": 23,
+      "AP+lateral": 1500,
+      "PA only": 38,
+      "PA+lateral": 6526,
+      "lateral only": 194,
+      "unknown": 522
+    },
+    "classes": [
+      {
+        "id": 1,
+        "positive_studies": 568,
+        "positive_patients": 525,
+        "positive_single_view": 356,
+        "largest_patient_positive_count": 3
+      },
+      {
+        "id": 2,
+        "positive_studies": 738,
+        "positive_patients": 521,
+        "positive_single_view": 497,
+        "largest_patient_positive_count": 8
+      },
+      {
+        "id": 3,
+        "positive_studies": 834,
+        "positive_patients": 742,
+        "positive_single_view": 579,
+        "largest_patient_positive_count": 4
+      },
+      {
+        "id": 4,
+        "positive_studies": 1314,
+        "positive_patients": 1204,
+        "positive_single_view": 622,
+        "largest_patient_positive_count": 4
+      },
+      {
+        "id": 5,
+        "positive_studies": 2162,
+        "positive_patients": 1618,
+        "positive_single_view": 1533,
+        "largest_patient_positive_count": 10
+      },
+      {
+        "id": 6,
+        "positive_studies": 3543,
+        "positive_patients": 2639,
+        "positive_single_view": 2193,
+        "largest_patient_positive_count": 14
+      },
+      {
+        "id": 7,
+        "positive_studies": 3609,
+        "positive_patients": 2753,
+        "positive_single_view": 2285,
+        "largest_patient_positive_count": 8
+      },
+      {
+        "id": 8,
+        "positive_studies": 4072,
+        "positive_patients": 3132,
+        "positive_single_view": 2333,
+        "largest_patient_positive_count": 9
+      },
+      {
+        "id": 9,
+        "positive_studies": 4139,
+        "positive_patients": 2707,
+        "positive_single_view": 2595,
+        "largest_patient_positive_count": 10
+      },
+      {
+        "id": 10,
+        "positive_studies": 6444,
+        "positive_patients": 5606,
+        "positive_single_view": 1553,
+        "largest_patient_positive_count": 8
+      }
+    ],
+    "cooccurrence": [
+      [
+        568,
+        40,
+        36,
+        53,
+        110,
+        135,
+        176,
+        213,
+        202,
+        0
+      ],
+      [
+        40,
+        738,
+        34,
+        18,
+        65,
+        132,
+        210,
+        155,
+        247,
+        0
+      ],
+      [
+        36,
+        34,
+        834,
+        175,
+        201,
+        208,
+        177,
+        214,
+        456,
+        0
+      ],
+      [
+        53,
+        18,
+        175,
+        1314,
+        241,
+        252,
+        277,
+        647,
+        392,
+        0
+      ],
+      [
+        110,
+        65,
+        201,
+        241,
+        2162,
+        882,
+        558,
+        628,
+        1126,
+        0
+      ],
+      [
+        135,
+        132,
+        208,
+        252,
+        882,
+        3543,
+        1115,
+        900,
+        1344,
+        0
+      ],
+      [
+        176,
+        210,
+        177,
+        277,
+        558,
+        1115,
+        3609,
+        1113,
+        1711,
+        0
+      ],
+      [
+        213,
+        155,
+        214,
+        647,
+        628,
+        900,
+        1113,
+        4072,
+        1329,
+        0
+      ],
+      [
+        202,
+        247,
+        456,
+        392,
+        1126,
+        1344,
+        1711,
+        1329,
+        4139,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        6444
+      ]
+    ]
+  },
+  "dev": {
+    "studies": 1347,
+    "patients": 200,
+    "images": 1903,
+    "max_studies_per_patient": 18,
+    "view_counts": {
+      "1": 868,
+      "2": 411,
+      "3": 60,
+      "4": 7,
+      "5": 1
+    },
+    "view_groups": {
+      "AP only": 968,
+      "AP+lateral": 79,
+      "PA only": 2,
+      "PA+lateral": 263,
+      "lateral only": 10,
+      "unknown": 25
+    },
+    "classes": [
+      {
+        "id": 1,
+        "positive_studies": 54,
+        "positive_patients": 47,
+        "positive_single_view": 39,
+        "largest_patient_positive_count": 3
+      },
+      {
+        "id": 2,
+        "positive_studies": 162,
+        "positive_patients": 71,
+        "positive_single_view": 106,
+        "largest_patient_positive_count": 16
+      },
+      {
+        "id": 3,
+        "positive_studies": 108,
+        "positive_patients": 72,
+        "positive_single_view": 83,
+        "largest_patient_positive_count": 5
+      },
+      {
+        "id": 4,
+        "positive_studies": 122,
+        "positive_patients": 80,
+        "positive_single_view": 81,
+        "largest_patient_positive_count": 4
+      },
+      {
+        "id": 5,
+        "positive_studies": 242,
+        "positive_patients": 124,
+        "positive_single_view": 185,
+        "largest_patient_positive_count": 7
+      },
+      {
+        "id": 6,
+        "positive_studies": 342,
+        "positive_patients": 153,
+        "positive_single_view": 258,
+        "largest_patient_positive_count": 6
+      },
+      {
+        "id": 7,
+        "positive_studies": 359,
+        "positive_patients": 153,
+        "positive_single_view": 259,
+        "largest_patient_positive_count": 10
+      },
+      {
+        "id": 8,
+        "positive_studies": 436,
+        "positive_patients": 163,
+        "positive_single_view": 311,
+        "largest_patient_positive_count": 8
+      },
+      {
+        "id": 9,
+        "positive_studies": 515,
+        "positive_patients": 152,
+        "positive_single_view": 368,
+        "largest_patient_positive_count": 13
+      },
+      {
+        "id": 10,
+        "positive_studies": 239,
+        "positive_patients": 118,
+        "positive_single_view": 95,
+        "largest_patient_positive_count": 7
+      }
+    ],
+    "cooccurrence": [
+      [
+        54,
+        7,
+        2,
+        1,
+        11,
+        9,
+        15,
+        19,
+        21,
+        0
+      ],
+      [
+        7,
+        162,
+        10,
+        2,
+        12,
+        24,
+        35,
+        38,
+        46,
+        0
+      ],
+      [
+        2,
+        10,
+        108,
+        27,
+        35,
+        26,
+        28,
+        28,
+        52,
+        0
+      ],
+      [
+        1,
+        2,
+        27,
+        122,
+        40,
+        26,
+        28,
+        69,
+        51,
+        0
+      ],
+      [
+        11,
+        12,
+        35,
+        40,
+        242,
+        87,
+        48,
+        76,
+        131,
+        0
+      ],
+      [
+        9,
+        24,
+        26,
+        26,
+        87,
+        342,
+        123,
+        105,
+        157,
+        0
+      ],
+      [
+        15,
+        35,
+        28,
+        28,
+        48,
+        123,
+        359,
+        111,
+        215,
+        0
+      ],
+      [
+        19,
+        38,
+        28,
+        69,
+        76,
+        105,
+        111,
+        436,
+        184,
+        0
+      ],
+      [
+        21,
+        46,
+        52,
+        51,
+        131,
+        157,
+        215,
+        184,
+        515,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        239
+      ]
+    ]
+  },
+  "valid": {
+    "studies": 859,
+    "patients": 228,
+    "images": 1422,
+    "max_studies_per_patient": 89,
+    "view_counts": {
+      "1": 391,
+      "2": 380,
+      "3": 81,
+      "4": 7
+    },
+    "view_groups": {
+      "AP only": 442,
+      "AP+PA": 2,
+      "AP+lateral": 66,
+      "PA only": 5,
+      "PA+lateral": 315,
+      "lateral only": 12,
+      "unknown": 17
+    },
+    "classes": [
+      {
+        "id": 1,
+        "positive_studies": 24,
+        "positive_patients": 16,
+        "positive_single_view": 15,
+        "largest_patient_positive_count": 5
+      },
+      {
+        "id": 2,
+        "positive_studies": 37,
+        "positive_patients": 13,
+        "positive_single_view": 18,
+        "largest_patient_positive_count": 7
+      },
+      {
+        "id": 3,
+        "positive_studies": 46,
+        "positive_patients": 24,
+        "positive_single_view": 31,
+        "largest_patient_positive_count": 11
+      },
+      {
+        "id": 4,
+        "positive_studies": 68,
+        "positive_patients": 37,
+        "positive_single_view": 37,
+        "largest_patient_positive_count": 11
+      },
+      {
+        "id": 5,
+        "positive_studies": 115,
+        "positive_patients": 34,
+        "positive_single_view": 78,
+        "largest_patient_positive_count": 15
+      },
+      {
+        "id": 6,
+        "positive_studies": 177,
+        "positive_patients": 66,
+        "positive_single_view": 113,
+        "largest_patient_positive_count": 31
+      },
+      {
+        "id": 7,
+        "positive_studies": 193,
+        "positive_patients": 64,
+        "positive_single_view": 106,
+        "largest_patient_positive_count": 25
+      },
+      {
+        "id": 8,
+        "positive_studies": 214,
+        "positive_patients": 72,
+        "positive_single_view": 137,
+        "largest_patient_positive_count": 33
+      },
+      {
+        "id": 9,
+        "positive_studies": 260,
+        "positive_patients": 52,
+        "positive_single_view": 162,
+        "largest_patient_positive_count": 34
+      },
+      {
+        "id": 10,
+        "positive_studies": 306,
+        "positive_patients": 166,
+        "positive_single_view": 75,
+        "largest_patient_positive_count": 17
+      }
+    ],
+    "cooccurrence": [
+      [
+        24,
+        1,
+        3,
+        5,
+        3,
+        4,
+        15,
+        10,
+        8,
+        0
+      ],
+      [
+        1,
+        37,
+        1,
+        0,
+        0,
+        4,
+        16,
+        7,
+        16,
+        0
+      ],
+      [
+        3,
+        1,
+        46,
+        10,
+        11,
+        12,
+        12,
+        11,
+        26,
+        0
+      ],
+      [
+        5,
+        0,
+        10,
+        68,
+        11,
+        12,
+        11,
+        36,
+        23,
+        0
+      ],
+      [
+        3,
+        0,
+        11,
+        11,
+        115,
+        45,
+        29,
+        30,
+        71,
+        0
+      ],
+      [
+        4,
+        4,
+        12,
+        12,
+        45,
+        177,
+        65,
+        51,
+        86,
+        0
+      ],
+      [
+        15,
+        16,
+        12,
+        11,
+        29,
+        65,
+        193,
+        55,
+        107,
+        0
+      ],
+      [
+        10,
+        7,
+        11,
+        36,
+        30,
+        51,
+        55,
+        214,
+        70,
+        0
+      ],
+      [
+        8,
+        16,
+        26,
+        23,
+        71,
+        86,
+        107,
+        70,
+        260,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        306
+      ]
+    ]
+  }
+}

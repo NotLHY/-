@@ -24,7 +24,7 @@ from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-INCLUDE_DIRS = ("src", "configs", "docs", "tools")
+INCLUDE_DIRS = ("src", "configs", "docs", "tools", "scripts")
 INCLUDE_FILES = ("pyproject.toml", "README.md", ".python-version", ".dockerignore")
 
 SKIP_DIR_NAMES = {

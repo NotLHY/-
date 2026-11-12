@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr
 
@@ -23,9 +23,14 @@ class Config(BaseModel):
     pretrained: StrictBool = True
     pooling: Literal["image_mean", "study_mean", "study_attention"] = "image_mean"
     loss: Literal["bce", "asl"] = "bce"
+    class_loss_weights: list[Annotated[StrictFloat, Field(gt=0, le=10)]] | None = Field(
+        default=None, min_length=10, max_length=10
+    )
     image_size: StrictInt = Field(default=224, ge=32, le=2048)
     batch_size: StrictInt = Field(default=4, ge=1, le=512)
     epochs: StrictInt = Field(default=3, ge=1, le=1000)
+    # Keep the exploratory LR trajectory when final training stops at its selected epoch.
+    schedule_epochs: StrictInt | None = Field(default=None, ge=1, le=1000)
     learning_rate: StrictFloat = Field(default=0.0003, gt=0, le=1)
     weight_decay: StrictFloat = Field(default=0.0001, ge=0, le=1)
     seed: StrictInt = Field(default=42, ge=0)
@@ -38,7 +43,7 @@ class Config(BaseModel):
     train_limit: StrictInt | None = Field(default=None, ge=1)
     val_limit: StrictInt | None = Field(default=None, ge=1)
     val_fraction: StrictFloat = Field(default=0.15, gt=0, lt=1)
-    validation: Literal["internal", "official"] = "internal"
+    validation: Literal["internal", "official", "holdout", "none"] = "internal"
     # Train on train.csv + valid.csv combined (final-run data maximisation, B1).
     # Forces an internal split because the official valid is absorbed into train.
     merge_valid: StrictBool = False

@@ -29,11 +29,11 @@ from .data import (
     cache_size_from_env,
     collate_studies,
 )
+from .holdout import Holdout
 from .logits import FLIP_DIMS, LogitCollector
 from .metrics import Metrics, summarize
 from .model import StudyModel
 from .records import StudyRecord, read_available, study_view_group
-from .holdout import Holdout
 from .splits import choose_studies, manifest_studies
 
 # These change execution but not the saved weights or optimizer semantics.
@@ -154,19 +154,20 @@ def _cache_info(requested_size: int | None = None) -> dict[str, object] | None:
 
 
 def _scheduler(optimizer: torch.optim.Optimizer, config: Config) -> Any:
-    warmup = min(config.warmup_epochs, max(0, config.epochs - 1))
+    horizon = config.schedule_epochs or config.epochs
+    warmup = min(config.warmup_epochs, max(0, horizon - 1))
     if warmup > 0:
         return torch.optim.lr_scheduler.SequentialLR(
             optimizer,
             schedulers=[
                 torch.optim.lr_scheduler.LinearLR(optimizer, start_factor=0.1, total_iters=warmup),
                 torch.optim.lr_scheduler.CosineAnnealingLR(
-                    optimizer, T_max=max(1, config.epochs - warmup)
+                    optimizer, T_max=max(1, horizon - warmup)
                 ),
             ],
             milestones=[warmup],
         )
-    return torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=config.epochs)
+    return torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=horizon)
 
 
 def _config_mismatches(saved: dict[str, Any], current: dict[str, Any]) -> list[str]:
@@ -306,22 +307,16 @@ def train(config: Config, resume: Path | None = None, holdout: Holdout | None = 
         raise ValueError("Resume must use this run's last.pt")
     run.mkdir(parents=True, exist_ok=True)
     if resume is None:
-        try:
-            from .codesnapshot import write_code_snapshot
+        from .codesnapshot import write_code_snapshot
 
-            snapshot = write_code_snapshot(run, config, tag="train")
-            print(
-                f"[snapshot] code_snapshot sha256={snapshot['archive']['sha256'][:12]}",
-                flush=True,
-            )
-        except Exception as exc:  # noqa: BLE001 - 快照失败绝不阻断训练
-            print(f"[snapshot] skipped: {type(exc).__name__}: {exc}", flush=True)
+        snapshot = write_code_snapshot(run, config, tag="train")
+        print(f"[snapshot] code_snapshot sha256={snapshot['archive']['sha256'][:12]}", flush=True)
     cache = _cache_info(cache_size_from_env(config.cache_size))
     if resume is None:
         train_studies, valid_studies, manifest = choose_studies(config, data, holdout)
         model = StudyModel(config).to(device)
         if config.channels_last:
-            model = model.to(memory_format=torch.channels_last)
+            model = model.to(memory_format=torch.channels_last)  # type: ignore[call-overload]
         if config.init_from is not None:
             if not config.init_from.is_file():
                 raise FileNotFoundError(f"init_from checkpoint missing: {config.init_from}")
@@ -342,7 +337,7 @@ def train(config: Config, resume: Path | None = None, holdout: Holdout | None = 
         manifest = json.loads((run / "split_manifest.json").read_text(encoding="utf-8"))
         if manifest["csv_sha256"] != {name: part.sha256 for name, part in data.items()}:
             raise ValueError("CSV hashes differ from saved split manifest")
-        train_map = {study.study_id: study for study in data["train"].studies}
+        train_map = {study.study_id: study for part in data.values() for study in part.studies}
         train_studies = [train_map[key] for key in manifest["train_study_ids"]]
         valid_studies = manifest_studies(data, manifest)
         saved_cache_path = run / "cache_manifest.json"
@@ -362,7 +357,7 @@ def train(config: Config, resume: Path | None = None, holdout: Holdout | None = 
         if state["config"].get("reweight_views", False):
             raise ValueError("Cannot resume a historical reweight_views run; start a fresh run")
         if config.channels_last:
-            model = model.to(memory_format=torch.channels_last)
+            model = model.to(memory_format=torch.channels_last)  # type: ignore[call-overload]
         saved_config = state["config"]
         current_config = config.model_dump(mode="json")
         mismatches = _config_mismatches(saved_config, current_config)
@@ -492,7 +487,22 @@ def train(config: Config, resume: Path | None = None, holdout: Holdout | None = 
         if not steps:
             raise ValueError("No training batches")
         scheduler.step()
-        metrics, probabilities = score(model, valid_studies, config, device, config.max_val_batches)
+        if config.validation == "none":
+            # No checkpoint selection or validation feedback in frozen final training.
+            metrics: Metrics = {
+                "val_loss": 0.0, "macro_auc": None, "macro_auc_defined": None,
+                "defined_auc_count": 0, "macro_auc_reweighted": None,
+                "macro_auc_reweighted_defined": None, "defined_auc_count_reweighted": 0,
+                "macro_f1": 0.0, "per_class_auc": [None] * 10,
+                "per_class_auc_reweighted": [None] * 10, "view_group_auc": {},
+                "view_weights": None, "positive_counts": [0] * 10, "study_count": 0,
+                "scope": "no_validation_fixed_epochs",
+            }
+            probabilities = np.empty((0, 10))
+        else:
+            metrics, probabilities = score(
+                model, valid_studies, config, device, config.max_val_batches
+            )
         metrics["epoch"] = epoch
         metrics["train_loss"] = float(train_loss / steps)
         metrics["steps"] = steps
@@ -500,8 +510,8 @@ def train(config: Config, resume: Path | None = None, holdout: Holdout | None = 
         metrics["partial_smoke"] = config.partial
         selection_key = "macro_auc"
         metrics["selection_metric"] = selection_key
-        old_auc = None if best_metrics is None else best_metrics.get(selection_key)
-        new_auc = metrics.get(selection_key)
+        old_auc = None if best_metrics is None else best_metrics["macro_auc"]
+        new_auc = metrics["macro_auc"]
         better = (
             best_metrics is None
             or (new_auc is not None and (old_auc is None or new_auc > old_auc))
@@ -511,7 +521,7 @@ def train(config: Config, resume: Path | None = None, holdout: Holdout | None = 
                 and metrics["val_loss"] < best_metrics["val_loss"]
             )
         )
-        if better:
+        if better and config.validation != "none":
             best_metrics = metrics
             best_model = snapshot_model(model)
             best_probabilities = torch.from_numpy(probabilities.copy())
@@ -538,3 +548,8 @@ def train(config: Config, resume: Path | None = None, holdout: Holdout | None = 
         )
         if best_metrics is not None and epoch - int(best_metrics["epoch"]) >= config.patience:
             break
+    if config.validation == "none":
+        write_checkpoint(run / "final.pt", {
+            "model": snapshot_model(model), "epoch": config.epochs,
+            "best_metrics": None, "config": config.model_dump(mode="json"),
+        })

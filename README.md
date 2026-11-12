@@ -4,7 +4,8 @@
 > 原始数据在 `AI/cxr_first/cxr_first/`（gitignored）；换机器时用 `CXR_DATA_ROOT`
 > 指向实际挂载路径。代码快照 / 发布包流程见仓库根 `docs/workflow.md`。
 
-当前入口：[最终冲刺计划](docs/PLAN_2026-11-10-final-sprint.md) 与
+当前入口：[11月12日数据核查与服务器交接](docs/SPRINT_2026-11-12.md)、
+[历史冲刺计划](docs/PLAN_2026-11-10-final-sprint.md) 与
 [规则复核](docs/REASSESSMENT_2026-10-31.md)。下文保留第一阶段环境与历史操作说明；
 验证集使用、自监督与蒸馏权限以补充规则及上述复核为准。
 

@@ -58,7 +58,23 @@ def choose_studies(
         if "valid" not in data:
             raise ValueError("merge_valid requires valid.csv")
         all_train = all_train + list(data["valid"].studies)
-    if config.validation == "official" and not config.merge_valid:
+    if config.validation == "none":
+        if (holdout is not None or config.train_limit is not None or config.val_limit is not None
+                or config.min_patient_studies is not None):
+            raise ValueError("Fixed full-data training forbids holdout and data limits")
+        train, valid, source = all_train, [], "none"
+    elif config.validation == "holdout":
+        if holdout is None:
+            raise ValueError("validation=holdout requires --holdout-manifest")
+        train, _ = holdout.split_train(all_train)
+        valid = holdout.select(list(data["train"].studies))
+        if set(holdout.studies) != {
+            study.study_id for study in data["train"].studies
+            if study.subject_id in holdout.subjects
+        }:
+            raise ValueError("Holdout must list every study for its train patients")
+        source = "holdout"
+    elif config.validation == "official" and not config.merge_valid:
         if "valid" not in data:
             raise ValueError("Official validation requires valid.csv")
         train, valid = all_train, list(data["valid"].studies)
@@ -92,8 +108,14 @@ def choose_studies(
         source = "internal"
     holdout_info: dict[str, object] | None = None
     if holdout is not None:
-        holdout.check_disjoint(valid, "the validation")
-        train, dropped = holdout.split_train(train)
+        if config.validation != "holdout":
+            holdout.check_disjoint(valid, "the validation")
+        else:
+            official = list(data["valid"].studies) if "valid" in data else []
+            holdout.check_disjoint(official, "official valid")
+        train, dropped = holdout.split_train(
+            all_train if config.validation == "holdout" else train
+        )
         if not train:
             raise ValueError("Holdout manifest removed every training study")
         holdout_info = {
@@ -143,8 +165,15 @@ def choose_studies(
 def manifest_studies(
     data: dict[str, SplitRecords], manifest: dict[str, object]
 ) -> list[StudyRecord]:
-    source = "valid" if manifest["validation"] == "official" else "train"
-    available = {study.study_id: study for study in data[source].studies}
+    if manifest["validation"] == "none":
+        return []
+    sources = {"official": {"valid"}, "holdout": {"train"}}.get(
+        str(manifest["validation"]), {"train", "valid"}
+    )
+    available = {
+        study.study_id: study for name, part in data.items() if name in sources
+        for study in part.studies
+    }
     ids = manifest["valid_study_ids"]
     if not isinstance(ids, list):
         raise ValueError("Invalid split manifest")

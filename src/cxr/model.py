@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 from collections.abc import Callable
 from pathlib import Path
+from typing import cast
 from urllib.parse import urlparse
 
 import timm
@@ -22,7 +23,7 @@ from torchvision.models import (
 
 from .config import Config
 
-WEIGHTS: dict[str, object] = {
+WEIGHTS: dict[str, EfficientNet_B0_Weights | ResNet18_Weights | DenseNet121_Weights] = {
     "efficientnet_b0": EfficientNet_B0_Weights.DEFAULT,
     "resnet18": ResNet18_Weights.DEFAULT,
     "densenet121": DenseNet121_Weights.DEFAULT,
@@ -78,6 +79,11 @@ def weight_provenance(config: Config) -> dict[str, str | None]:
 class StudyModel(nn.Module):
     def __init__(self, config: Config, load_pretrained: bool = True) -> None:
         super().__init__()
+        # Plain tuple leaves the checkpoint state dictionary backward compatible.
+        self.class_loss_weights = (
+            tuple(config.class_loss_weights) if config.class_loss_weights is not None else None
+        )
+        self.encoder: nn.Module
         if config.backbone == "efficientnet_b0":
             network = efficientnet_b0(
                 weights=EfficientNet_B0_Weights.DEFAULT
@@ -106,21 +112,20 @@ class StudyModel(nn.Module):
             # Any other id is a timm model (ConvNeXt, ViT, ...). num_classes=0 makes timm
             # return pooled features. Convolutional families ignore img_size, ViT families
             # need it (plus dynamic_img_size) to accept a resolution other than their default.
-            timm_kwargs: dict[str, object] = {
-                "pretrained": config.pretrained and load_pretrained,
-                "num_classes": 0,
-            }
             try:
                 timm_model = timm.create_model(
                     config.backbone,
                     img_size=config.image_size,
                     dynamic_img_size=True,
-                    **timm_kwargs,
+                    pretrained=config.pretrained and load_pretrained,
+                    num_classes=0,
                 )
             except TypeError:
-                timm_model = timm.create_model(config.backbone, **timm_kwargs)
+                timm_model = timm.create_model(
+                    config.backbone, pretrained=config.pretrained and load_pretrained, num_classes=0
+                )
             self.encoder = timm_model
-            dimension = int(timm_model.num_features)
+            dimension = int(cast(int, timm_model.num_features))
         self.pooling = config.pooling
         self.frozen = config.freeze_backbone
         self.channels_last = config.channels_last
@@ -146,7 +151,9 @@ class StudyModel(nn.Module):
             if self.pooling == "study_attention"
             else None
         )
-        for module in (self.view_embedding, self.condition_view_embedding, self.orientation_embedding):
+        for module in (
+            self.view_embedding, self.condition_view_embedding, self.orientation_embedding
+        ):
             if module is not None:
                 nn.init.normal_(module.weight, std=0.02)
 
@@ -257,10 +264,18 @@ class StudyModel(nn.Module):
         if self.pooling == "image_mean":
             per_view = multilabel_loss(
                 view_logits, targets.unsqueeze(1).expand_as(view_logits), loss_name
-            ).mean(dim=-1)
+            )
+            if self.class_loss_weights is not None:
+                weights = per_view.new_tensor(self.class_loss_weights)
+                per_view = per_view * (weights / weights.mean())
+            per_view = per_view.mean(dim=-1)
             loss = ((per_view * mask).sum(dim=1) / mask.sum(dim=1)).mean()
         else:
-            loss = multilabel_loss(logits, targets, loss_name).mean()
+            terms = multilabel_loss(logits, targets, loss_name)
+            if self.class_loss_weights is not None:
+                weights = terms.new_tensor(self.class_loss_weights)
+                terms = terms * (weights / weights.mean())
+            loss = terms.mean()
         return loss, probs
 
 
